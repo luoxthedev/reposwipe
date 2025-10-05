@@ -5,15 +5,15 @@ const RedisStore = require('connect-redis').default;
 const cors = require('cors');
 const path = require('path');
 
-const connectDB = require('./config/database');
+const { connectSupabase } = require('./config/supabase');
 const { connectRedis } = require('./config/redis');
 const logger = require('./config/logger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connexion à MongoDB
-connectDB();
+// Connexion à Supabase
+connectSupabase();
 
 // Fonction pour initialiser le serveur
 const startServer = async () => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Swipe = require('../models/Swipe');
+const { getSupabase } = require('../config/supabase');
 const logger = require('../config/logger');
 
 // Middleware pour vérifier l'authentification
@@ -17,28 +17,39 @@ router.post('/', requireAuth, async (req, res) => {
     try {
         const { repoId, action, repoData } = req.body;
         const userId = req.session.userId;
+        const supabase = getSupabase();
         
         // Vérifier si le swipe existe déjà
-        const existingSwipe = await Swipe.findOne({ userId, repoId });
+        const { data: existingSwipe } = await supabase
+            .from('swipes')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('repo_id', repoId)
+            .single();
         
         if (existingSwipe) {
             // Mettre à jour le swipe existant
-            existingSwipe.action = action;
-            existingSwipe.repoData = repoData;
-            existingSwipe.timestamp = new Date();
-            await existingSwipe.save();
+            await supabase
+                .from('swipes')
+                .update({
+                    action,
+                    repo_data: repoData,
+                    timestamp: new Date().toISOString()
+                })
+                .eq('id', existingSwipe.id);
             
             logger.info(`Swipe mis à jour: ${action} - Repo ${repoId} - User ${userId}`);
         } else {
             // Créer un nouveau swipe
-            const swipe = new Swipe({
-                userId,
-                repoId,
-                action,
-                repoData
-            });
+            await supabase
+                .from('swipes')
+                .insert([{
+                    user_id: userId,
+                    repo_id: repoId,
+                    action,
+                    repo_data: repoData
+                }]);
             
-            await swipe.save();
             logger.info(`Nouveau swipe: ${action} - Repo ${repoId} - User ${userId}`);
         }
         
@@ -53,7 +64,15 @@ router.post('/', requireAuth, async (req, res) => {
 router.get('/', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
-        const swipes = await Swipe.find({ userId }).sort({ timestamp: -1 });
+        const supabase = getSupabase();
+        
+        const { data: swipes, error } = await supabase
+            .from('swipes')
+            .select('*')
+            .eq('user_id', userId)
+            .order('timestamp', { ascending: false });
+        
+        if (error) throw error;
         
         logger.info(`Récupération de ${swipes.length} swipes pour l'utilisateur ${userId}`);
         res.json({ swipes });
@@ -67,10 +86,16 @@ router.get('/', requireAuth, async (req, res) => {
 router.get('/favorites', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
-        const favorites = await Swipe.find({ 
-            userId, 
-            action: { $in: ['like', 'super'] }
-        }).sort({ timestamp: -1 });
+        const supabase = getSupabase();
+        
+        const { data: favorites, error } = await supabase
+            .from('swipes')
+            .select('*')
+            .eq('user_id', userId)
+            .in('action', ['like', 'super'])
+            .order('timestamp', { ascending: false });
+        
+        if (error) throw error;
         
         logger.info(`Récupération de ${favorites.length} favoris pour l'utilisateur ${userId}`);
         res.json({ favorites });
@@ -85,8 +110,13 @@ router.delete('/:repoId', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
         const { repoId } = req.params;
+        const supabase = getSupabase();
         
-        await Swipe.deleteOne({ userId, repoId });
+        await supabase
+            .from('swipes')
+            .delete()
+            .eq('user_id', userId)
+            .eq('repo_id', repoId);
         
         logger.info(`Swipe supprimé: Repo ${repoId} - User ${userId}`);
         res.json({ success: true });
@@ -100,30 +130,21 @@ router.delete('/:repoId', requireAuth, async (req, res) => {
 router.get('/stats', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
+        const supabase = getSupabase();
         
-        const stats = await Swipe.aggregate([
-            { $match: { userId: require('mongoose').Types.ObjectId(userId) } },
-            { 
-                $group: {
-                    _id: '$action',
-                    count: { $sum: 1 }
-                }
-            }
-        ]);
+        const { data: swipes, error } = await supabase
+            .from('swipes')
+            .select('action')
+            .eq('user_id', userId);
+        
+        if (error) throw error;
         
         const formattedStats = {
-            total: 0,
-            likes: 0,
-            rejects: 0,
-            supers: 0
+            total: swipes.length,
+            likes: swipes.filter(s => s.action === 'like').length,
+            rejects: swipes.filter(s => s.action === 'reject').length,
+            supers: swipes.filter(s => s.action === 'super').length
         };
-        
-        stats.forEach(stat => {
-            formattedStats.total += stat.count;
-            if (stat._id === 'like') formattedStats.likes = stat.count;
-            if (stat._id === 'reject') formattedStats.rejects = stat.count;
-            if (stat._id === 'super') formattedStats.supers = stat.count;
-        });
         
         logger.info(`Statistiques récupérées pour l'utilisateur ${userId}`);
         res.json({ stats: formattedStats });

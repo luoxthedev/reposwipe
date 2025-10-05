@@ -1,13 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
-const User = require('../models/User');
+const { getSupabase } = require('../config/supabase');
 const logger = require('../config/logger');
 
 // Inscription
 router.post('/register', async (req, res) => {
     try {
         const { email, password, username } = req.body;
+        const supabase = getSupabase();
         
         logger.info(`Tentative d'inscription: ${email}`);
         
@@ -21,7 +22,12 @@ router.post('/register', async (req, res) => {
         }
         
         // Vérifier si l'utilisateur existe déjà
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('*')
+            .or(`email.eq.${email},username.eq.${username}`)
+            .single();
+        
         if (existingUser) {
             logger.warn(`Inscription échouée: Email ou username déjà utilisé - ${email}`);
             return res.status(400).json({ error: 'Email ou nom d\'utilisateur déjà utilisé' });
@@ -31,16 +37,24 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         
         // Créer l'utilisateur
-        const user = new User({
-            email,
-            username,
-            password: hashedPassword
-        });
+        const { data: user, error } = await supabase
+            .from('users')
+            .insert([
+                {
+                    email,
+                    username,
+                    password: hashedPassword,
+                    created_at: new Date().toISOString(),
+                    last_login: new Date().toISOString()
+                }
+            ])
+            .select()
+            .single();
         
-        await user.save();
+        if (error) throw error;
         
         // Créer la session
-        req.session.userId = user._id.toString();
+        req.session.userId = user.id;
         req.session.email = user.email;
         req.session.username = user.username;
         
@@ -49,7 +63,7 @@ router.post('/register', async (req, res) => {
         res.json({ 
             success: true, 
             user: { 
-                id: user._id, 
+                id: user.id, 
                 email: user.email, 
                 username: user.username 
             }
@@ -64,6 +78,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        const supabase = getSupabase();
         
         logger.info(`Tentative de connexion: ${email}`);
         
@@ -73,8 +88,13 @@ router.post('/login', async (req, res) => {
         }
         
         // Trouver l'utilisateur
-        const user = await User.findOne({ email });
-        if (!user) {
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
+        
+        if (error || !user) {
             logger.warn(`Connexion échouée: Utilisateur non trouvé - ${email}`);
             return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
         }
@@ -87,11 +107,13 @@ router.post('/login', async (req, res) => {
         }
         
         // Mettre à jour la dernière connexion
-        user.lastLogin = new Date();
-        await user.save();
+        await supabase
+            .from('users')
+            .update({ last_login: new Date().toISOString() })
+            .eq('id', user.id);
         
         // Créer la session
-        req.session.userId = user._id.toString();
+        req.session.userId = user.id;
         req.session.email = user.email;
         req.session.username = user.username;
         
@@ -100,7 +122,7 @@ router.post('/login', async (req, res) => {
         res.json({ 
             success: true, 
             user: { 
-                id: user._id, 
+                id: user.id, 
                 email: user.email, 
                 username: user.username 
             }
@@ -128,12 +150,18 @@ router.post('/logout', (req, res) => {
 router.get('/check', async (req, res) => {
     try {
         if (req.session.userId) {
-            const user = await User.findById(req.session.userId).select('-password');
+            const supabase = getSupabase();
+            const { data: user } = await supabase
+                .from('users')
+                .select('id, email, username')
+                .eq('id', req.session.userId)
+                .single();
+            
             if (user) {
                 res.json({ 
                     authenticated: true, 
                     user: { 
-                        id: user._id, 
+                        id: user.id, 
                         email: user.email, 
                         username: user.username 
                     }

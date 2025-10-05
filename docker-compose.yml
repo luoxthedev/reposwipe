@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:7
-    container_name: reposwipe-mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: reposwipe
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - reposwipe-network
-
   redis:
     image: redis:7-alpine
     container_name: reposwipe-redis
@@ -22,15 +9,13 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - reposwipe-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
 volumes:
-  mongodb_data:
-    driver: local
   redis_data:
     driver: local
-
-networks:
-  reposwipe-network:
-    driver: bridge

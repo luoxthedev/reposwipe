@@ -1,68 +1,83 @@
 # 🚀 Démarrage rapide de RepoSwipe
 
-## Option 1 : Avec Docker (Recommandé) 🐳
+## ⚡ Installation rapide (5 minutes)
 
-### 1. Installer les dépendances
+### 1️⃣ Installer les dépendances
 ```bash
 npm install
 ```
 
-### 2. Configurer l'environnement
+### 2️⃣ Configurer Supabase (Base de données gratuite)
+📖 **Suis le guide complet** : [SETUP.md](SETUP.md)
+
+En résumé :
+1. Crée un compte sur [supabase.com](https://supabase.com) (gratuit)
+2. Crée un nouveau projet
+3. Exécute le script SQL pour créer les tables
+4. Copie tes clés API
+
+### 3️⃣ Installer Docker Desktop (pour Redis)
+1. Télécharge [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+2. Installe et lance Docker Desktop
+
+### 4️⃣ Configurer l'environnement
 ```bash
 copy .env.exemple .env
 ```
 
-### 3. Lancer MongoDB et Redis avec Docker
+Édite `.env` et ajoute tes clés Supabase :
+```env
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=ta_cle_ici
+SUPABASE_ANON_KEY=ta_cle_ici
+```
+
+### 5️⃣ Lancer Redis avec Docker
 ```bash
 npm run docker:up
 ```
 
-Cette commande démarre automatiquement MongoDB et Redis en arrière-plan.
-
-### 4. Lancer le serveur
+### 6️⃣ Démarrer le serveur
 ```bash
 npm run dev
 ```
 
-### 5. Ouvrir l'application
-Ouvre ton navigateur sur : **http://localhost:3000**
+### 7️⃣ Ouvrir l'application
+Ouvre ton navigateur sur : **http://localhost:3000** 🎉
 
-### Commandes Docker utiles
+---
+
+## 🛠️ Commandes utiles
+
 ```bash
-# Arrêter les services
+# Démarrer Redis
+npm run docker:up
+
+# Arrêter Redis
 npm run docker:down
 
-# Voir les logs
+# Voir les logs Redis
 npm run docker:logs
 
-# Redémarrer les services
-npm run docker:down && npm run docker:up
+# Démarrer le serveur en mode dev
+npm run dev
+
+# Démarrer le serveur en mode production
+npm start
 ```
 
 ---
 
-## Option 2 : Installation manuelle
+## 📚 Guides détaillés
 
-### 1. Installer les dépendances
-```bash
-npm install
-```
+- **[SETUP.md](SETUP.md)** - Guide complet étape par étape avec captures d'écran
+- **[INSTALLATION.md](INSTALLATION.md)** - Installation manuelle de MongoDB/Redis (si tu ne veux pas Docker)
 
-### 2. Installer MongoDB et Redis
-Voir le guide complet : [INSTALLATION.md](INSTALLATION.md)
+---
 
-### 3. Configurer l'environnement
-```bash
-copy .env.exemple .env
-```
+## ❓ Besoin d'aide ?
 
-### 4. Lancer le serveur
-```bash
-npm run dev
-```
-
-### 5. Ouvrir l'application
-Ouvre ton navigateur sur : **http://localhost:3000**
+Si tu rencontres un problème, consulte la section "Problèmes courants" dans [SETUP.md](SETUP.md)
 
 ## 🎯 Utilisation
 

@@ -23,18 +23,23 @@ cd reposwipe
 # 2. Installe les dépendances
 npm install
 
-# 3. Configure l'environnement
+# 3. Configure Supabase (gratuit, 2 minutes)
+# Voir SETUP.md pour le guide complet
+
+# 4. Configure l'environnement
 copy .env.exemple .env
+# Ajoute tes clés Supabase dans .env
 
-# 4. Lance MongoDB et Redis (voir INSTALLATION.md)
+# 5. Lance Redis avec Docker
+npm run docker:up
 
-# 5. Démarre le serveur
+# 6. Démarre le serveur
 npm run dev
 ```
 
 Ouvre ton navigateur sur `http://localhost:3000`
 
-📖 **Guide complet** : Voir [INSTALLATION.md](INSTALLATION.md) pour l'installation détaillée de MongoDB et Redis.
+📖 **Guide complet** : Voir [SETUP.md](SETUP.md) pour le guide étape par étape avec captures d'écran.
 
 ## 🎮 Comment utiliser
 
@@ -80,8 +85,8 @@ RepoSwipe/
 
 ### Backend
 - **Node.js** + **Express** - Serveur web
-- **MongoDB** + **Mongoose** - Base de données
-- **Redis** + **connect-redis** - Gestion des sessions
+- **Supabase** - Base de données PostgreSQL (gratuit)
+- **Redis** + **connect-redis** - Gestion des sessions (optionnel)
 - **bcryptjs** - Hashage des mots de passe
 - **Winston** - Système de logs
 - **express-session** - Gestion des sessions
@@ -93,22 +98,23 @@ RepoSwipe/
 - **Font Awesome** - Icônes
 
 ### DevOps
-- **MCP Supabase** - Alternative base de données (optionnel)
+- **Docker** - Redis en conteneur
+- **MCP Supabase** - Intégration Supabase
 - **dotenv** - Variables d'environnement
 
 ## 📝 TODO
 
-- [x] Ajouter une vraie base de données (MongoDB)
+- [x] Ajouter une vraie base de données (Supabase PostgreSQL)
 - [x] Améliorer la gestion des sessions avec Redis
 - [x] Ajouter des logs avec Winston
 - [x] Configuration MCP Supabase
+- [x] Docker pour Redis
 - [ ] Ajouter des statistiques utilisateur dans l'UI
 - [ ] Implémenter le partage de favoris
 - [ ] Mode sombre
 - [ ] Export des favoris en JSON
 - [ ] Notifications push
 - [ ] Tests unitaires et d'intégration
-- [ ] Docker compose pour faciliter le déploiement
 
 ## 🔧 Personnalisation
 
