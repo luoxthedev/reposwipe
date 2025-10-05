@@ -1,5 +1,5 @@
 // Configuration et variables globales
-const API_BASE_URL = 'https://api.github.com';
+const API_BASE_URL = '/api/github'; // Utiliser notre proxy au lieu de l'API GitHub directe
 let currentRepos = [];
 let currentIndex = 0;
 let favorites = JSON.parse(localStorage.getItem('repoSwipeFavorites')) || [];
@@ -9,6 +9,7 @@ let startY = 0;
 let currentX = 0;
 let currentY = 0;
 let currentCard = null;
+let githubRateLimit = { remaining: 5000, limit: 5000 };
 
 // Paramètres de recherche
 let searchParams = {
@@ -59,11 +60,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     
+    // Vérifier le rate limit GitHub
+    await checkGitHubRateLimit();
+    
     loadRepos();
     loadFavoritesFromServer();
     updateFavoritesCount();
     setupEventListeners();
 });
+
+// Vérifier le rate limit GitHub
+async function checkGitHubRateLimit() {
+    try {
+        const response = await fetch('/api/github/rate-limit');
+        const data = await response.json();
+        
+        githubRateLimit = {
+            remaining: data.core.remaining,
+            limit: data.core.limit,
+            reset: data.core.reset
+        };
+        
+        console.log(`GitHub API: ${data.core.remaining}/${data.core.limit} requêtes restantes`);
+        
+        if (data.core.remaining < 10) {
+            const resetDate = new Date(data.core.reset);
+            showNotification(
+                `⚠️ Attention: Plus que ${data.core.remaining} requêtes GitHub. Reset à ${resetDate.toLocaleTimeString()}`,
+                'warning'
+            );
+        }
+        
+        if (!data.authenticated) {
+            console.warn('⚠️ GitHub API non authentifiée. Limite: 60 requêtes/heure. Ajoute un token pour 5000 requêtes/heure.');
+        }
+    } catch (error) {
+        console.error('Erreur vérification rate limit:', error);
+    }
+}
 
 // Vérifier l'authentification
 async function checkAuth() {
@@ -102,18 +136,26 @@ async function loadRepos() {
         const randomPage = Math.floor(Math.random() * 10) + 1;
         
         const response = await fetch(
-            `${API_BASE_URL}/search/repositories?q=${query}&sort=${searchParams.sort}&order=desc&per_page=30&page=${randomPage}`
+            `${API_BASE_URL}/search/repositories?q=${encodeURIComponent(query)}&sort=${searchParams.sort}&order=desc&per_page=30&page=${randomPage}`
         );
         
         if (!response.ok) {
-            // Si rate limit GitHub, attendre et réessayer
-            if (response.status === 403) {
-                throw new Error('Limite API GitHub atteinte. Réessaye dans quelques minutes.');
+            // Si rate limit GitHub
+            if (response.status === 429) {
+                const errorData = await response.json();
+                const resetDate = new Date(errorData.resetAt);
+                throw new Error(`Limite API GitHub atteinte. Réessaye à ${resetDate.toLocaleTimeString()}`);
             }
-            throw new Error('Erreur API GitHub');
+            throw new Error('Erreur lors du chargement des repos');
         }
         
         const data = await response.json();
+        
+        // Mettre à jour le rate limit
+        if (data.rateLimit) {
+            githubRateLimit = data.rateLimit;
+            console.log(`GitHub API: ${data.rateLimit.remaining}/${data.rateLimit.limit} requêtes restantes`);
+        }
         
         // Mélanger les résultats pour plus de variété
         currentRepos = shuffleArray(data.items);
@@ -500,11 +542,17 @@ async function loadMoreRepos() {
         const randomPage = Math.floor(Math.random() * 10) + 1;
         
         const response = await fetch(
-            `${API_BASE_URL}/search/repositories?q=${query}&sort=${searchParams.sort}&order=desc&per_page=30&page=${randomPage}`
+            `${API_BASE_URL}/search/repositories?q=${encodeURIComponent(query)}&sort=${searchParams.sort}&order=desc&per_page=30&page=${randomPage}`
         );
         
         if (response.ok) {
             const data = await response.json();
+            
+            // Mettre à jour le rate limit
+            if (data.rateLimit) {
+                githubRateLimit = data.rateLimit;
+            }
+            
             // Mélanger et ajouter les nouveaux repos
             const shuffledNewRepos = shuffleArray(data.items);
             currentRepos = currentRepos.concat(shuffledNewRepos);

@@ -40,7 +40,8 @@ npm run dev
 Ouvre ton navigateur sur `http://localhost:3000`
 
 📖 **Guides disponibles** :
-- [SETUP.md](SETUP.md) - Configuration complète
+- [SETUP.md](SETUP.md) - Configuration Supabase
+- [GITHUB_TOKEN.md](GITHUB_TOKEN.md) - Obtenir un token GitHub (IMPORTANT)
 - [COMMANDS.md](COMMANDS.md) - Toutes les commandes disponibles
 
 ## 🎮 Comment utiliser

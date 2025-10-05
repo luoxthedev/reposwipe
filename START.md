@@ -16,33 +16,54 @@ En résumé :
 3. Exécute le script SQL pour créer les tables
 4. Copie tes clés API
 
-### 3️⃣ Installer Docker Desktop (pour Redis)
+### 3️⃣ Créer un token GitHub (IMPORTANT)
+📖 **Guide complet** : [GITHUB_TOKEN.md](GITHUB_TOKEN.md)
+
+**Pourquoi ?** Sans token, tu es limité à 60 requêtes/heure (tu vas vite être bloqué).  
+**Avec token** : 5000 requêtes/heure !
+
+En résumé :
+1. Va sur GitHub > Settings > Developer settings
+2. Crée un Personal Access Token (classic)
+3. Coche uniquement `public_repo`
+4. Copie le token
+
+### 4️⃣ Installer Docker Desktop (pour Redis)
 1. Télécharge [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 2. Installe et lance Docker Desktop
 
-### 4️⃣ Configurer l'environnement
+### 5️⃣ Configurer l'environnement
 ```bash
 copy .env.exemple .env
 ```
 
-Édite `.env` et ajoute tes clés Supabase :
+Édite `.env` et ajoute tes clés :
 ```env
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=ta_cle_ici
 SUPABASE_ANON_KEY=ta_cle_ici
+GITHUB_TOKEN=ghp_ton_token_ici
 ```
 
-### 5️⃣ Lancer Redis avec Docker
+### 6️⃣ Lancer Redis avec Docker
 ```bash
 npm run docker:up
 ```
 
-### 6️⃣ Démarrer le serveur
+### 7️⃣ Démarrer le serveur
 ```bash
 npm run dev
 ```
 
-### 7️⃣ Ouvrir l'application
+Tu devrais voir :
+```
+✅ Supabase connecté
+✅ Redis connecté
+GitHub API: 5000/5000 requêtes restantes
+🚀 Serveur démarré sur http://localhost:3000
+```
+
+### 8️⃣ Ouvrir l'application
 Ouvre ton navigateur sur : **http://localhost:3000** 🎉
 
 ---

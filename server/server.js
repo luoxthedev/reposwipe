@@ -58,6 +58,7 @@ const startServer = async () => {
     // Routes
     app.use('/api/auth', authLimiter, require('./routes/auth'));
     app.use('/api/swipes', swipeLimiter, require('./routes/swipes'));
+    app.use('/api/github', require('./routes/github'));
     
     // Route principale
     app.get('/', (req, res) => {
