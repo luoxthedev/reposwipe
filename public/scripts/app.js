@@ -81,9 +81,10 @@ async function checkGitHubRateLimit() {
             reset: data.core.reset
         };
         
-        console.log(`GitHub API: ${data.core.remaining}/${data.core.limit} requêtes restantes`);
+        console.log(`✅ GitHub API Core: ${data.core.remaining}/${data.core.limit} requêtes restantes`);
+        console.log(`ℹ️  Note: La recherche a une limite séparée de 30 requêtes/minute`);
         
-        if (data.core.remaining < 10) {
+        if (data.core.remaining < 100) {
             const resetDate = new Date(data.core.reset);
             showNotification(
                 `⚠️ Attention: Plus que ${data.core.remaining} requêtes GitHub. Reset à ${resetDate.toLocaleTimeString()}`,
@@ -92,7 +93,11 @@ async function checkGitHubRateLimit() {
         }
         
         if (!data.authenticated) {
-            console.warn('⚠️ GitHub API non authentifiée. Limite: 60 requêtes/heure. Ajoute un token pour 5000 requêtes/heure.');
+            console.warn('⚠️ GitHub API non authentifiée. Limite: 60 requêtes/heure.');
+            console.warn('💡 Ajoute un GITHUB_TOKEN dans .env pour 5000 requêtes/heure !');
+            showNotification('⚠️ Ajoute un token GitHub pour éviter les limites', 'warning');
+        } else {
+            console.log('✅ GitHub API authentifiée avec token');
         }
     } catch (error) {
         console.error('Erreur vérification rate limit:', error);
@@ -738,6 +743,56 @@ function setupEventListeners() {
             console.error('Erreur lors de la déconnexion:', error);
         }
     });
+    
+    // Panneau des statistiques
+    document.getElementById('statsBtn').addEventListener('click', () => {
+        document.getElementById('statsPanel').classList.add('active');
+        loadStats();
+    });
+    
+    document.getElementById('closeStats').addEventListener('click', () => {
+        document.getElementById('statsPanel').classList.remove('active');
+    });
+    
+    // Mode sombre
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    
+    darkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        darkModeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+}
+
+// Charger les statistiques
+async function loadStats() {
+    try {
+        const response = await fetch('/api/swipes/stats');
+        const data = await response.json();
+        
+        if (data.stats) {
+            const { total, likes, rejects, supers } = data.stats;
+            
+            document.getElementById('totalSwipes').textContent = total;
+            document.getElementById('totalLikes').textContent = likes;
+            document.getElementById('totalSupers').textContent = supers;
+            document.getElementById('totalRejects').textContent = rejects;
+            
+            // Calculer le taux d'appréciation
+            const likeRate = total > 0 ? Math.round(((likes + supers) / total) * 100) : 0;
+            document.getElementById('likeRate').style.width = `${likeRate}%`;
+            document.getElementById('likeRateText').textContent = `${likeRate}%`;
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des stats:', error);
+    }
 }
 
 // Fonction utilitaire pour formater les nombres

@@ -39,22 +39,23 @@ router.get('/search/repositories', requireAuth, async (req, res) => {
         
         const response = await fetch(url, { headers });
         
-        // Vérifier le rate limit
-        const remaining = response.headers.get('x-ratelimit-remaining');
-        const limit = response.headers.get('x-ratelimit-limit');
+        // Vérifier le rate limit (celui de la recherche, pas le global)
+        const searchRemaining = response.headers.get('x-ratelimit-remaining');
+        const searchLimit = response.headers.get('x-ratelimit-limit');
         const reset = response.headers.get('x-ratelimit-reset');
         
-        logger.info(`GitHub API: ${remaining}/${limit} requêtes restantes`);
+        // Note: Le rate limit de recherche est de 30/min, pas 5000/h
+        // Le rate limit global (5000/h) est différent
         
         if (!response.ok) {
             if (response.status === 403) {
                 const resetDate = new Date(reset * 1000);
-                logger.warn(`Rate limit GitHub atteint. Reset à ${resetDate.toLocaleTimeString()}`);
+                logger.warn(`Rate limit GitHub search atteint. Reset à ${resetDate.toLocaleTimeString()}`);
                 return res.status(429).json({ 
                     error: 'Limite API GitHub atteinte',
                     resetAt: resetDate.toISOString(),
                     remaining: 0,
-                    limit: parseInt(limit)
+                    limit: parseInt(searchLimit)
                 });
             }
             throw new Error(`GitHub API error: ${response.status}`);
@@ -66,8 +67,8 @@ router.get('/search/repositories', requireAuth, async (req, res) => {
         res.json({
             ...data,
             rateLimit: {
-                remaining: parseInt(remaining),
-                limit: parseInt(limit),
+                searchRemaining: parseInt(searchRemaining),
+                searchLimit: parseInt(searchLimit),
                 reset: new Date(reset * 1000).toISOString()
             }
         });

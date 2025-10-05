@@ -605,6 +605,197 @@ main {
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* Stats Panel */
+.stats-panel {
+    position: fixed;
+    top: 0;
+    right: -450px;
+    width: 450px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 101;
+    transition: right 0.3s;
+    overflow-y: auto;
+}
+
+.stats-panel.active {
+    right: 0;
+}
+
+.stats-content {
+    padding: 1.5rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--light);
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateX(-5px);
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-info h4 {
+    font-size: 2rem;
+    color: var(--dark);
+    margin-bottom: 0.25rem;
+}
+
+.stat-info p {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.stat-progress {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--light);
+    border-radius: 15px;
+}
+
+.stat-progress h4 {
+    color: var(--dark);
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    transition: width 0.5s ease;
+    border-radius: 10px;
+}
+
+.stat-progress p {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.dark-mode header {
+    background: rgba(31, 41, 55, 0.95);
+}
+
+.dark-mode .logo h1,
+.dark-mode .logo i {
+    color: white;
+}
+
+.dark-mode .nav-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: white;
+}
+
+.dark-mode .card {
+    background: #1f2937;
+    color: white;
+}
+
+.dark-mode .repo-info h2 {
+    color: white;
+}
+
+.dark-mode .repo-description {
+    color: #d1d5db;
+}
+
+.dark-mode .repo-stats {
+    background: #374151;
+}
+
+.dark-mode .stat span {
+    color: white;
+}
+
+.dark-mode .filters-panel,
+.dark-mode .favorites-panel,
+.dark-mode .stats-panel {
+    background: #1f2937;
+}
+
+.dark-mode .panel-header {
+    border-bottom-color: #374151;
+}
+
+.dark-mode .panel-header h3 {
+    color: white;
+}
+
+.dark-mode .close-panel {
+    color: #9ca3af;
+}
+
+.dark-mode .close-panel:hover {
+    color: white;
+}
+
+.dark-mode .filter-group label {
+    color: #9ca3af;
+}
+
+.dark-mode .filter-group select,
+.dark-mode .filter-group input {
+    background: #374151;
+    border-color: #4b5563;
+    color: white;
+}
+
+.dark-mode .favorite-item,
+.dark-mode .stat-card,
+.dark-mode .stat-progress {
+    background: #374151;
+}
+
+.dark-mode .favorite-item h4,
+.dark-mode .stat-info h4,
+.dark-mode .stat-progress h4,
+.dark-mode .stat-progress p {
+    color: white;
+}
+
+.dark-mode .favorite-item p,
+.dark-mode .stat-info p {
+    color: #9ca3af;
+}
+
+.dark-mode .no-more-cards {
+    color: white;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     :root {
@@ -621,7 +812,8 @@ main {
     }
     
     .favorites-panel,
-    .filters-panel {
+    .filters-panel,
+    .stats-panel {
         width: 100vw;
     }
     
