@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepoSwipe - Découvre des projets GitHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fab fa-github"></i>
+                <h1>RepoSwipe</h1>
+            </div>
+            <nav>
+                <button class="nav-btn" id="favoritesBtn">
+                    <i class="fas fa-heart"></i>
+                    <span class="favorites-count">0</span>
+                </button>
+                <button class="nav-btn" id="filtersBtn">
+                    <i class="fas fa-filter"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Filtres -->
+    <div class="filters-panel" id="filtersPanel">
+        <h3>Filtres</h3>
+        <div class="filter-group">
+            <label>Langage</label>
+            <select id="languageFilter">
+                <option value="">Tous</option>
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="typescript">TypeScript</option>
+                <option value="go">Go</option>
+                <option value="rust">Rust</option>
+                <option value="cpp">C++</option>
+                <option value="csharp">C#</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Trier par</label>
+            <select id="sortFilter">
+                <option value="stars">Stars</option>
+                <option value="updated">Mis à jour récemment</option>
+                <option value="created">Nouveaux</option>
+                <option value="forks">Forks</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Min. Stars</label>
+            <input type="number" id="minStars" placeholder="100" value="100">
+        </div>
+        <button class="apply-filters-btn" id="applyFilters">Appliquer</button>
+    </div>
+
+    <!-- Zone principale de swipe -->
+    <main>
+        <div class="swipe-container">
+            <!-- Loader -->
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <p>Chargement des repos...</p>
+            </div>
+
+            <!-- Stack de cartes -->
+            <div class="cards-stack" id="cardsStack">
+                <!-- Les cartes seront générées dynamiquement -->
+            </div>
+
+            <!-- Indicateurs de swipe -->
+            <div class="swipe-indicators">
+                <div class="nope-indicator">
+                    <i class="fas fa-times"></i>
+                    <span>SKIP</span>
+                </div>
+                <div class="like-indicator">
+                    <i class="fas fa-heart"></i>
+                    <span>LIKE</span>
+                </div>
+                <div class="super-indicator">
+                    <i class="fas fa-star"></i>
+                    <span>SUPER</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="action-buttons">
+            <button class="action-btn reject" id="rejectBtn">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="action-btn super" id="superBtn">
+                <i class="fas fa-star"></i>
+            </button>
+            <button class="action-btn like" id="likeBtn">
+                <i class="fas fa-heart"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Panel des favoris -->
+    <div class="favorites-panel" id="favoritesPanel">
+        <div class="panel-header">
+            <h3>Mes Favoris</h3>
+            <button class="close-panel" id="closeFavorites">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="favorites-list" id="favoritesList">
+            <!-- Les favoris seront affichés ici -->
+        </div>
+    </div>
+
+    <!-- Message quand plus de cartes -->
+    <div class="no-more-cards" id="noMoreCards" style="display: none;">
+        <i class="fas fa-inbox"></i>
+        <h2>Plus de repos pour le moment !</h2>
+        <p>Reviens plus tard ou modifie tes filtres</p>
+        <button class="refresh-btn" id="refreshBtn">
+            <i class="fas fa-sync"></i> Actualiser
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
