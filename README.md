@@ -39,7 +39,9 @@ npm run dev
 
 Ouvre ton navigateur sur `http://localhost:3000`
 
-📖 **Guide complet** : Voir [SETUP.md](SETUP.md) pour le guide étape par étape avec captures d'écran.
+📖 **Guides disponibles** :
+- [SETUP.md](SETUP.md) - Configuration complète
+- [COMMANDS.md](COMMANDS.md) - Toutes les commandes disponibles
 
 ## 🎮 Comment utiliser
 

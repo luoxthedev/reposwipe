@@ -52,9 +52,12 @@ const startServer = async () => {
     
     app.use(session(sessionConfig));
     
+    // Rate limiters
+    const { swipeLimiter, authLimiter } = require('./middleware/rateLimiter');
+    
     // Routes
-    app.use('/api/auth', require('./routes/auth'));
-    app.use('/api/swipes', require('./routes/swipes'));
+    app.use('/api/auth', authLimiter, require('./routes/auth'));
+    app.use('/api/swipes', swipeLimiter, require('./routes/swipes'));
     
     // Route principale
     app.get('/', (req, res) => {

@@ -18,6 +18,19 @@ let searchParams = {
     page: 1
 };
 
+// Mots-clés aléatoires pour varier les résultats
+const randomKeywords = [
+    'awesome', 'framework', 'library', 'tool', 'api', 'app', 'web', 
+    'mobile', 'game', 'bot', 'cli', 'ui', 'data', 'ml', 'ai',
+    'react', 'vue', 'angular', 'node', 'python', 'java', 'go',
+    'docker', 'kubernetes', 'cloud', 'serverless', 'microservices'
+];
+
+// Fonction pour obtenir un mot-clé aléatoire
+function getRandomKeyword() {
+    return randomKeywords[Math.floor(Math.random() * randomKeywords.length)];
+}
+
 // Couleurs des langages
 const languageColors = {
     JavaScript: '#f1e05a',
@@ -74,22 +87,36 @@ async function loadRepos() {
     noMoreCards.style.display = 'none';
     
     try {
-        // Construction de la requête de recherche
+        // Construction de la requête de recherche avec randomisation
         let query = `stars:>${searchParams.minStars}`;
+        
+        // Ajouter un mot-clé aléatoire pour varier les résultats
+        const randomKeyword = getRandomKeyword();
+        query += ` ${randomKeyword}`;
+        
         if (searchParams.language) {
             query += ` language:${searchParams.language}`;
         }
         
+        // Page aléatoire entre 1 et 10 pour plus de variété
+        const randomPage = Math.floor(Math.random() * 10) + 1;
+        
         const response = await fetch(
-            `${API_BASE_URL}/search/repositories?q=${query}&sort=${searchParams.sort}&order=desc&per_page=30&page=${searchParams.page}`
+            `${API_BASE_URL}/search/repositories?q=${query}&sort=${searchParams.sort}&order=desc&per_page=30&page=${randomPage}`
         );
         
         if (!response.ok) {
+            // Si rate limit GitHub, attendre et réessayer
+            if (response.status === 403) {
+                throw new Error('Limite API GitHub atteinte. Réessaye dans quelques minutes.');
+            }
             throw new Error('Erreur API GitHub');
         }
         
         const data = await response.json();
-        currentRepos = data.items;
+        
+        // Mélanger les résultats pour plus de variété
+        currentRepos = shuffleArray(data.items);
         currentIndex = 0;
         
         if (currentRepos.length === 0) {
@@ -103,8 +130,18 @@ async function loadRepos() {
         
     } catch (error) {
         console.error('Erreur lors du chargement des repos:', error);
-        loader.innerHTML = '<p>Erreur de chargement. Veuillez réessayer.</p>';
+        loader.innerHTML = `<p style="color: white;">${error.message}</p>`;
     }
+}
+
+// Fonction pour mélanger un tableau (Fisher-Yates shuffle)
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
 // Affichage des cartes
@@ -363,7 +400,7 @@ function handleSwipe(action) {
 // Sauvegarder un swipe sur le serveur
 async function saveSwipe(repo, action) {
     try {
-        await fetch('/api/swipes', {
+        const response = await fetch('/api/swipes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -379,9 +416,51 @@ async function saveSwipe(repo, action) {
                 }
             })
         });
+        
+        // Gérer le rate limiting
+        if (response.status === 429) {
+            const data = await response.json();
+            showNotification(`⏱️ ${data.error}`, 'warning');
+            
+            // Bloquer les swipes pendant 10 secondes
+            disableSwipes(10);
+        }
     } catch (error) {
         console.error('Erreur lors de la sauvegarde du swipe:', error);
     }
+}
+
+// Désactiver les swipes temporairement
+function disableSwipes(seconds) {
+    const buttons = document.querySelectorAll('.action-btn');
+    const cards = document.querySelectorAll('.card');
+    
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    });
+    
+    cards.forEach(card => {
+        card.style.pointerEvents = 'none';
+    });
+    
+    let countdown = seconds;
+    const interval = setInterval(() => {
+        countdown--;
+        if (countdown <= 0) {
+            clearInterval(interval);
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+            cards.forEach(card => {
+                card.style.pointerEvents = 'auto';
+            });
+            showNotification('✅ Tu peux continuer à swiper !', 'success');
+        }
+    }, 1000);
 }
 
 // Charger les favoris depuis le serveur
@@ -408,17 +487,27 @@ async function loadFavoritesFromServer() {
 async function loadMoreRepos() {
     try {
         let query = `stars:>${searchParams.minStars}`;
+        
+        // Ajouter un mot-clé aléatoire différent
+        const randomKeyword = getRandomKeyword();
+        query += ` ${randomKeyword}`;
+        
         if (searchParams.language) {
             query += ` language:${searchParams.language}`;
         }
         
+        // Page aléatoire pour plus de variété
+        const randomPage = Math.floor(Math.random() * 10) + 1;
+        
         const response = await fetch(
-            `${API_BASE_URL}/search/repositories?q=${query}&sort=${searchParams.sort}&order=desc&per_page=30&page=${searchParams.page}`
+            `${API_BASE_URL}/search/repositories?q=${query}&sort=${searchParams.sort}&order=desc&per_page=30&page=${randomPage}`
         );
         
         if (response.ok) {
             const data = await response.json();
-            currentRepos = currentRepos.concat(data.items);
+            // Mélanger et ajouter les nouveaux repos
+            const shuffledNewRepos = shuffleArray(data.items);
+            currentRepos = currentRepos.concat(shuffledNewRepos);
         }
     } catch (error) {
         console.error('Erreur lors du chargement de plus de repos:', error);
@@ -455,28 +544,41 @@ function addToFavorites(repo, isSuper = false) {
 }
 
 // Afficher une notification
-function showNotification(message) {
+function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
+    
+    const colors = {
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444',
+        info: 'white'
+    };
+    
     notification.style.cssText = `
         position: fixed;
         top: 100px;
         left: 50%;
         transform: translateX(-50%);
-        background: white;
+        background: ${colors[type] || 'white'};
+        color: ${type === 'info' ? '#1f2937' : 'white'};
         padding: 1rem 2rem;
         border-radius: 50px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         z-index: 1000;
         animation: slideDown 0.3s ease;
         font-weight: 600;
+        max-width: 90%;
+        text-align: center;
     `;
     notification.textContent = message;
     document.body.appendChild(notification);
     
+    const duration = type === 'warning' ? 3000 : 2000;
+    
     setTimeout(() => {
         notification.style.animation = 'slideUp 0.3s ease';
         setTimeout(() => notification.remove(), 300);
-    }, 2000);
+    }, duration);
 }
 
 // Mise à jour du compteur de favoris
