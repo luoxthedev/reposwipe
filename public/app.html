@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="header-content">
             <div class="logo">
@@ -16,6 +15,9 @@
                 <h1>RepoSwipe</h1>
             </div>
             <nav>
+                <button class="nav-btn" id="statsBtn" title="Statistiques">
+                    <i class="fas fa-chart-bar"></i>
+                </button>
                 <button class="nav-btn" id="favoritesBtn">
                     <i class="fas fa-heart"></i>
                     <span class="favorites-count">0</span>
@@ -23,14 +25,15 @@
                 <button class="nav-btn" id="filtersBtn">
                     <i class="fas fa-filter"></i>
                 </button>
+                <button class="nav-btn" id="darkModeBtn" title="Mode sombre">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <button class="nav-btn" id="logoutBtn" title="Déconnexion">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </nav>
         </div>
     </header>
-
-    <!-- Filtres -->
     <div class="filters-panel" id="filtersPanel">
         <h3>Filtres</h3>
         <div class="filter-group">
@@ -62,22 +65,13 @@
         </div>
         <button class="apply-filters-btn" id="applyFilters">Appliquer</button>
     </div>
-
-    <!-- Zone principale de swipe -->
     <main>
         <div class="swipe-container">
-            <!-- Loader -->
             <div class="loader" id="loader">
                 <div class="spinner"></div>
                 <p>Chargement des repos...</p>
             </div>
-
-            <!-- Stack de cartes -->
-            <div class="cards-stack" id="cardsStack">
-                <!-- Les cartes seront générées dynamiquement -->
-            </div>
-
-            <!-- Indicateurs de swipe -->
+            <div class="cards-stack" id="cardsStack"></div>
             <div class="swipe-indicators">
                 <div class="nope-indicator">
                     <i class="fas fa-times"></i>
@@ -93,8 +87,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Boutons d'action -->
         <div class="action-buttons">
             <button class="action-btn reject" id="rejectBtn">
                 <i class="fas fa-times"></i>
@@ -107,8 +99,6 @@
             </button>
         </div>
     </main>
-
-    <!-- Panel des favoris -->
     <div class="favorites-panel" id="favoritesPanel">
         <div class="panel-header">
             <h3>Mes Favoris</h3>
@@ -116,12 +106,61 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="favorites-list" id="favoritesList">
-            <!-- Les favoris seront affichés ici -->
+        <div class="favorites-list" id="favoritesList"></div>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+        <div class="panel-header">
+            <h3>Mes Statistiques</h3>
+            <button class="close-panel" id="closeStats">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="stats-content">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-swatchbook"></i>
+                </div>
+                <div class="stat-info">
+                    <h4 id="totalSwipes">0</h4>
+                    <p>Total swipes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-info">
+                    <h4 id="totalLikes">0</h4>
+                    <p>Likes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <h4 id="totalSupers">0</h4>
+                    <p>Super likes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="stat-info">
+                    <h4 id="totalRejects">0</h4>
+                    <p>Rejects</p>
+                </div>
+            </div>
+            <div class="stat-progress">
+                <h4>Taux d'appréciation</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="likeRate" style="width: 0%"></div>
+                </div>
+                <p id="likeRateText">0%</p>
+            </div>
         </div>
     </div>
-
-    <!-- Message quand plus de cartes -->
     <div class="no-more-cards" id="noMoreCards" style="display: none;">
         <i class="fas fa-inbox"></i>
         <h2>Plus de repos pour le moment !</h2>
@@ -130,7 +169,6 @@
             <i class="fas fa-sync"></i> Actualiser
         </button>
     </div>
-
     <script src="scripts/app.js"></script>
 </body>
 </html>
