@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepoSwipe - Découvre des projets GitHub</title>
+    <link rel="stylesheet" href="styles/landing.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <div class="logo">
+                <i class="fab fa-github"></i>
+                <h1>RepoSwipe</h1>
+            </div>
+            <p class="tagline">Découvre les meilleurs projets GitHub en swipant</p>
+            <p class="description">
+                Explore des milliers de repositories, sauvegarde tes favoris et trouve l'inspiration pour ton prochain projet.
+            </p>
+            <button class="cta-btn" id="startBtn">
+                <i class="fas fa-play"></i> Commencer à swiper
+            </button>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-swatchbook"></i>
+                    <h3>Swipe intuitif</h3>
+                    <p>Découvre des projets d'un simple geste</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-heart"></i>
+                    <h3>Sauvegarde tes favoris</h3>
+                    <p>Garde une trace des repos qui t'intéressent</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-filter"></i>
+                    <h3>Filtres personnalisés</h3>
+                    <p>Trouve exactement ce que tu cherches</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'authentification -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Connexion</button>
+                <button class="auth-tab" data-tab="register">Inscription</button>
+            </div>
+            
+            <!-- Formulaire de connexion -->
+            <form id="loginForm" class="auth-form">
+                <h2>Connecte-toi</h2>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Se connecter</button>
+                <p class="error-message" id="loginError"></p>
+            </form>
+            
+            <!-- Formulaire d'inscription -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <h2>Crée ton compte</h2>
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" required minlength="6">
+                </div>
+                <button type="submit" class="submit-btn">S'inscrire</button>
+                <p class="error-message" id="registerError"></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="scripts/landing.js"></script>
+</body>
+</html>

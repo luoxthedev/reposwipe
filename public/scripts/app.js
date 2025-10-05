@@ -38,11 +38,30 @@ const languageColors = {
 };
 
 // Initialisation
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Vérifier l'authentification
+    const auth = await checkAuth();
+    if (!auth) {
+        window.location.href = '/';
+        return;
+    }
+    
     loadRepos();
+    loadFavoritesFromServer();
     updateFavoritesCount();
     setupEventListeners();
 });
+
+// Vérifier l'authentification
+async function checkAuth() {
+    try {
+        const response = await fetch('/api/auth/check');
+        const data = await response.json();
+        return data.authenticated;
+    } catch (error) {
+        return false;
+    }
+}
 
 // Chargement des repos depuis l'API GitHub
 async function loadRepos() {
@@ -304,6 +323,9 @@ function handleSwipe(action) {
     
     const repo = currentRepos[currentIndex];
     
+    // Sauvegarder le swipe sur le serveur
+    saveSwipe(repo, action);
+    
     // Animation de sortie
     card.classList.add('removed');
     
@@ -336,6 +358,50 @@ function handleSwipe(action) {
     }, 300);
     
     currentCard = null;
+}
+
+// Sauvegarder un swipe sur le serveur
+async function saveSwipe(repo, action) {
+    try {
+        await fetch('/api/swipes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                repoId: repo.id,
+                action: action,
+                repoData: {
+                    name: repo.name,
+                    owner: repo.owner.login,
+                    description: repo.description,
+                    stars: repo.stargazers_count,
+                    language: repo.language,
+                    url: repo.html_url
+                }
+            })
+        });
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde du swipe:', error);
+    }
+}
+
+// Charger les favoris depuis le serveur
+async function loadFavoritesFromServer() {
+    try {
+        const response = await fetch('/api/swipes/favorites');
+        const data = await response.json();
+        
+        if (data.favorites) {
+            favorites = data.favorites.map(f => ({
+                id: f.repoId,
+                ...f.repoData,
+                isSuper: f.action === 'super'
+            }));
+            localStorage.setItem('repoSwipeFavorites', JSON.stringify(favorites));
+            updateFavoritesCount();
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des favoris:', error);
+    }
 }
 
 // Charger plus de repos en arrière-plan
@@ -511,6 +577,16 @@ function setupEventListeners() {
     document.getElementById('refreshBtn').addEventListener('click', () => {
         searchParams.page = 1;
         loadRepos();
+    });
+    
+    // Bouton déconnexion
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+        }
     });
 }
 
