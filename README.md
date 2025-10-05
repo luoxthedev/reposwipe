@@ -13,36 +13,28 @@ Découvrez des projets GitHub de manière fun et interactive ! Swipez à gauche 
 - ⚡ **Super Like** - Pour les projets exceptionnels
 - 💾 **Sauvegarde serveur** - Vos favoris sont synchronisés
 
-## 🚀 Installation
+## 🚀 Installation rapide
 
-1. Clone le repo :
 ```bash
+# 1. Clone le repo
 git clone https://github.com/luoxthedev/reposwipe.git
 cd reposwipe
-```
 
-2. Installe les dépendances :
-```bash
+# 2. Installe les dépendances
 npm install
-```
 
-3. Configure les variables d'environnement :
-```bash
-cp .env.exemple .env
-```
-Édite le fichier `.env` avec tes propres valeurs.
+# 3. Configure l'environnement
+copy .env.exemple .env
 
-4. Lance le serveur :
-```bash
-npm start
-```
+# 4. Lance MongoDB et Redis (voir INSTALLATION.md)
 
-Pour le développement avec auto-reload :
-```bash
+# 5. Démarre le serveur
 npm run dev
 ```
 
-5. Ouvre ton navigateur sur `http://localhost:3000`
+Ouvre ton navigateur sur `http://localhost:3000`
+
+📖 **Guide complet** : Voir [INSTALLATION.md](INSTALLATION.md) pour l'installation détaillée de MongoDB et Redis.
 
 ## 🎮 Comment utiliser
 
@@ -87,28 +79,36 @@ RepoSwipe/
 ## 🛠️ Technologies utilisées
 
 ### Backend
-- Node.js
-- Express
-- express-session
-- bcryptjs
-- dotenv
+- **Node.js** + **Express** - Serveur web
+- **MongoDB** + **Mongoose** - Base de données
+- **Redis** + **connect-redis** - Gestion des sessions
+- **bcryptjs** - Hashage des mots de passe
+- **Winston** - Système de logs
+- **express-session** - Gestion des sessions
 
 ### Frontend
-- HTML5
-- CSS3 (animations, transitions)
-- JavaScript vanilla
-- API GitHub
-- Font Awesome
+- **HTML5** + **CSS3** - Interface utilisateur
+- **JavaScript vanilla** - Logique client
+- **GitHub API** - Récupération des repos
+- **Font Awesome** - Icônes
+
+### DevOps
+- **MCP Supabase** - Alternative base de données (optionnel)
+- **dotenv** - Variables d'environnement
 
 ## 📝 TODO
 
-- [ ] Ajouter une vraie base de données (MongoDB/PostgreSQL)
-- [ ] Améliorer la gestion des sessions avec Redis
-- [ ] Ajouter des statistiques utilisateur
+- [x] Ajouter une vraie base de données (MongoDB)
+- [x] Améliorer la gestion des sessions avec Redis
+- [x] Ajouter des logs avec Winston
+- [x] Configuration MCP Supabase
+- [ ] Ajouter des statistiques utilisateur dans l'UI
 - [ ] Implémenter le partage de favoris
 - [ ] Mode sombre
 - [ ] Export des favoris en JSON
 - [ ] Notifications push
+- [ ] Tests unitaires et d'intégration
+- [ ] Docker compose pour faciliter le déploiement
 
 ## 🔧 Personnalisation
 

@@ -1,6 +1,6 @@
 # 🚀 Démarrage rapide de RepoSwipe
 
-## Étapes pour lancer l'application
+## Option 1 : Avec Docker (Recommandé) 🐳
 
 ### 1. Installer les dépendances
 ```bash
@@ -8,24 +8,60 @@ npm install
 ```
 
 ### 2. Configurer l'environnement
-Copie le fichier `.env.exemple` en `.env` :
 ```bash
 copy .env.exemple .env
 ```
 
-Le fichier `.env` contient déjà des valeurs par défaut qui fonctionnent pour le développement local.
-
-### 3. Lancer le serveur
+### 3. Lancer MongoDB et Redis avec Docker
 ```bash
-npm start
+npm run docker:up
 ```
 
-Ou pour le développement avec auto-reload :
+Cette commande démarre automatiquement MongoDB et Redis en arrière-plan.
+
+### 4. Lancer le serveur
 ```bash
 npm run dev
 ```
 
-### 4. Ouvrir l'application
+### 5. Ouvrir l'application
+Ouvre ton navigateur sur : **http://localhost:3000**
+
+### Commandes Docker utiles
+```bash
+# Arrêter les services
+npm run docker:down
+
+# Voir les logs
+npm run docker:logs
+
+# Redémarrer les services
+npm run docker:down && npm run docker:up
+```
+
+---
+
+## Option 2 : Installation manuelle
+
+### 1. Installer les dépendances
+```bash
+npm install
+```
+
+### 2. Installer MongoDB et Redis
+Voir le guide complet : [INSTALLATION.md](INSTALLATION.md)
+
+### 3. Configurer l'environnement
+```bash
+copy .env.exemple .env
+```
+
+### 4. Lancer le serveur
+```bash
+npm run dev
+```
+
+### 5. Ouvrir l'application
 Ouvre ton navigateur sur : **http://localhost:3000**
 
 ## 🎯 Utilisation
