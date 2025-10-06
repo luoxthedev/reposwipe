@@ -613,14 +613,20 @@ main {
 }
 
 .user-stats span {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+}
+
+.user-stats span i {
+    width: 14px;
+    text-align: center;
 }
 
 .user-stats .like-rate {
     color: var(--success);
     font-weight: bold;
+    margin-left: 0.5rem;
 }
 
 .score-badge {

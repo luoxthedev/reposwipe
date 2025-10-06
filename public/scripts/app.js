@@ -871,8 +871,8 @@ async function loadLeaderboard() {
                             <h4>${entry.username} ${isCurrentUser ? '(Toi)' : ''}</h4>
                             <div class="user-stats">
                                 <span><i class="fas fa-swatchbook"></i> ${entry.stats.total}</span>
-                                <span><i class="fas fa-heart"></i> ${entry.stats.likes}</span>
-                                <span><i class="fas fa-star"></i> ${entry.stats.supers}</span>
+                                <span style="color: #10b981;"><i class="fas fa-heart"></i> ${entry.stats.likes}</span>
+                                <span style="color: #f59e0b;"><i class="fas fa-star"></i> ${entry.stats.supers}</span>
                                 <span class="like-rate">${entry.stats.likeRate}%</span>
                             </div>
                         </div>
@@ -951,24 +951,8 @@ async function shareFavorites() {
         favorites.slice(0, 5).map(f => `⭐ ${f.name} by @${f.owner}\n${f.url}`).join('\n\n') +
         (favorites.length > 5 ? `\n\n... et ${favorites.length - 5} autres !` : '');
     
-    // Vérifier si l'API Web Share est disponible
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: 'Mes favoris RepoSwipe',
-                text: shareText
-            });
-            showNotification('✅ Favoris partagés !', 'success');
-        } catch (error) {
-            if (error.name !== 'AbortError') {
-                console.error('Erreur partage:', error);
-                copyToClipboard(shareText);
-            }
-        }
-    } else {
-        // Fallback: copier dans le presse-papier
-        copyToClipboard(shareText);
-    }
+    // Toujours copier dans le presse-papier (plus simple et fiable)
+    copyToClipboard(shareText);
 }
 
 // Copier dans le presse-papier
