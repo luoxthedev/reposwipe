@@ -794,6 +794,16 @@ function setupEventListeners() {
         }
     });
     
+    // Panneau du leaderboard
+    document.getElementById('leaderboardBtn').addEventListener('click', () => {
+        document.getElementById('leaderboardPanel').classList.add('active');
+        loadLeaderboard();
+    });
+    
+    document.getElementById('closeLeaderboard').addEventListener('click', () => {
+        document.getElementById('leaderboardPanel').classList.remove('active');
+    });
+    
     // Panneau des statistiques
     document.getElementById('statsBtn').addEventListener('click', () => {
         document.getElementById('statsPanel').classList.add('active');
@@ -825,6 +835,62 @@ function setupEventListeners() {
         localStorage.setItem('darkMode', isDark);
         darkModeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
+}
+
+// Charger le leaderboard
+async function loadLeaderboard() {
+    try {
+        const leaderboardList = document.getElementById('leaderboardList');
+        leaderboardList.innerHTML = '<div class="loader"><div class="spinner"></div><p>Chargement...</p></div>';
+        
+        // Charger le leaderboard
+        const response = await fetch('/api/leaderboard');
+        const data = await response.json();
+        
+        // Charger mon rang
+        const rankResponse = await fetch('/api/leaderboard/my-rank');
+        const rankData = await rankResponse.json();
+        
+        if (rankData.rank) {
+            document.getElementById('myRank').textContent = `#${rankData.rank}`;
+            document.getElementById('myUsername').textContent = rankData.username;
+            document.getElementById('myScore').textContent = rankData.score;
+        }
+        
+        if (data.leaderboard && data.leaderboard.length > 0) {
+            leaderboardList.innerHTML = data.leaderboard.map(entry => {
+                const medalEmoji = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : '';
+                const isCurrentUser = entry.username === rankData.username;
+                
+                return `
+                    <div class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
+                        <div class="rank-number">
+                            ${medalEmoji || `#${entry.rank}`}
+                        </div>
+                        <div class="user-info">
+                            <h4>${entry.username} ${isCurrentUser ? '(Toi)' : ''}</h4>
+                            <div class="user-stats">
+                                <span><i class="fas fa-swatchbook"></i> ${entry.stats.total}</span>
+                                <span><i class="fas fa-heart"></i> ${entry.stats.likes}</span>
+                                <span><i class="fas fa-star"></i> ${entry.stats.supers}</span>
+                                <span class="like-rate">${entry.stats.likeRate}%</span>
+                            </div>
+                        </div>
+                        <div class="score-badge">
+                            ${Math.round(entry.score)} pts
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            leaderboardList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">Aucun utilisateur dans le classement</p>';
+        }
+        
+        console.log(`🏆 Leaderboard chargé: ${data.leaderboard.length} utilisateurs`);
+    } catch (error) {
+        console.error('Erreur lors du chargement du leaderboard:', error);
+        document.getElementById('leaderboardList').innerHTML = '<p style="text-align: center; color: #ef4444; padding: 2rem;">Erreur de chargement</p>';
+    }
 }
 
 // Charger les statistiques

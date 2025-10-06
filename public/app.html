@@ -15,6 +15,9 @@
                 <h1>RepoSwipe</h1>
             </div>
             <nav>
+                <button class="nav-btn" id="leaderboardBtn" title="Classement">
+                    <i class="fas fa-trophy"></i>
+                </button>
                 <button class="nav-btn" id="statsBtn" title="Statistiques">
                     <i class="fas fa-chart-bar"></i>
                 </button>
@@ -115,6 +118,31 @@
             </div>
         </div>
         <div class="favorites-list" id="favoritesList"></div>
+    </div>
+    <div class="leaderboard-panel" id="leaderboardPanel">
+        <div class="panel-header">
+            <h3>🏆 Classement</h3>
+            <button class="close-panel" id="closeLeaderboard">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="leaderboard-content">
+            <div class="my-rank-card" id="myRankCard">
+                <div class="rank-badge">
+                    <span id="myRank">#-</span>
+                </div>
+                <div class="rank-info">
+                    <h4 id="myUsername">Chargement...</h4>
+                    <p><span id="myScore">0</span> points</p>
+                </div>
+            </div>
+            <div class="leaderboard-list" id="leaderboardList">
+                <div class="loader">
+                    <div class="spinner"></div>
+                    <p>Chargement du classement...</p>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="stats-panel" id="statsPanel">
         <div class="panel-header">

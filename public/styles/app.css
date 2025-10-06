@@ -506,6 +506,154 @@ main {
     background: var(--light);
 }
 
+/* Leaderboard Panel */
+.leaderboard-panel {
+    position: fixed;
+    top: 0;
+    right: -500px;
+    width: 500px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 101;
+    transition: right 0.3s;
+    overflow-y: auto;
+}
+
+.leaderboard-panel.active {
+    right: 0;
+}
+
+.leaderboard-content {
+    padding: 1.5rem;
+}
+
+.my-rank-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.rank-badge {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.rank-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.2rem;
+}
+
+.rank-info p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--light);
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s;
+}
+
+.leaderboard-item:hover {
+    transform: translateX(-5px);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-item.current-user {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border: 2px solid var(--primary);
+}
+
+.rank-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--dark);
+    min-width: 50px;
+    text-align: center;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+}
+
+.user-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.user-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.user-stats .like-rate {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.score-badge {
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Dark mode pour leaderboard */
+.dark-mode .leaderboard-panel {
+    background: #1f2937;
+}
+
+.dark-mode .leaderboard-item {
+    background: #374151;
+}
+
+.dark-mode .leaderboard-item.current-user {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+}
+
+.dark-mode .rank-number,
+.dark-mode .user-info h4 {
+    color: white;
+}
+
+.dark-mode .user-stats {
+    color: #9ca3af;
+}
+
 .favorites-list {
     padding: 1rem;
 }
