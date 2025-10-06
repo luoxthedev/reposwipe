@@ -490,6 +490,22 @@ main {
     color: var(--dark);
 }
 
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.3s;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.icon-btn:hover {
+    color: var(--primary);
+    background: var(--light);
+}
+
 .favorites-list {
     padding: 1rem;
 }

@@ -804,6 +804,12 @@ function setupEventListeners() {
         document.getElementById('statsPanel').classList.remove('active');
     });
     
+    // Export des favoris
+    document.getElementById('exportBtn')?.addEventListener('click', exportFavorites);
+    
+    // Partage des favoris
+    document.getElementById('shareBtn')?.addEventListener('click', shareFavorites);
+    
     // Mode sombre
     const darkModeBtn = document.getElementById('darkModeBtn');
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -842,6 +848,87 @@ async function loadStats() {
         }
     } catch (error) {
         console.error('Erreur lors du chargement des stats:', error);
+    }
+}
+
+// Exporter les favoris en JSON
+function exportFavorites() {
+    if (favorites.length === 0) {
+        showNotification('❌ Aucun favori à exporter', 'warning');
+        return;
+    }
+    
+    const dataStr = JSON.stringify(favorites, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `reposwipe-favorites-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    showNotification(`✅ ${favorites.length} favoris exportés !`, 'success');
+    console.log(`📥 Favoris exportés: ${favorites.length} repos`);
+}
+
+// Partager les favoris
+async function shareFavorites() {
+    if (favorites.length === 0) {
+        showNotification('❌ Aucun favori à partager', 'warning');
+        return;
+    }
+    
+    const shareText = `Mes ${favorites.length} repos GitHub préférés sur RepoSwipe:\n\n` +
+        favorites.slice(0, 5).map(f => `⭐ ${f.name} by @${f.owner}\n${f.url}`).join('\n\n') +
+        (favorites.length > 5 ? `\n\n... et ${favorites.length - 5} autres !` : '');
+    
+    // Vérifier si l'API Web Share est disponible
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Mes favoris RepoSwipe',
+                text: shareText
+            });
+            showNotification('✅ Favoris partagés !', 'success');
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Erreur partage:', error);
+                copyToClipboard(shareText);
+            }
+        }
+    } else {
+        // Fallback: copier dans le presse-papier
+        copyToClipboard(shareText);
+    }
+}
+
+// Copier dans le presse-papier
+function copyToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('📋 Copié dans le presse-papier !', 'success');
+        }).catch(err => {
+            console.error('Erreur copie:', err);
+            showNotification('❌ Erreur lors de la copie', 'error');
+        });
+    } else {
+        // Fallback pour navigateurs anciens
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showNotification('📋 Copié dans le presse-papier !', 'success');
+        } catch (err) {
+            showNotification('❌ Erreur lors de la copie', 'error');
+        }
+        document.body.removeChild(textarea);
     }
 }
 

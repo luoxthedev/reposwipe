@@ -125,11 +125,13 @@ RepoSwipe/
 - [x] GitHub API authentication
 - [x] Randomisation des repos
 - [x] Docker Compose complet
-- [ ] Implémenter le partage de favoris
-- [ ] Export des favoris en JSON
+- [x] Implémenter le partage de favoris
+- [x] Export des favoris en JSON
+- [x] Tests unitaires et d'intégration
+- [x] CI/CD avec GitHub Actions
 - [ ] Notifications push
-- [ ] Tests unitaires et d'intégration
-- [ ] CI/CD avec GitHub Actions
+- [ ] PWA (Progressive Web App)
+- [ ] Import de favoris JSON
 
 ## 🔧 Personnalisation
 

@@ -1,0 +1,17 @@
+﻿    <div class="favorites-panel" id="favoritesPanel">
+        <div class="panel-header">
+            <h3>Mes Favoris</h3>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="icon-btn" id="exportBtn" title="Exporter en JSON">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="icon-btn" id="shareBtn" title="Partager">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="close-panel" id="closeFavorites">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="favorites-list" id="favoritesList"></div>
+    </div>
