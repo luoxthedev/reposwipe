@@ -1,6 +1,33 @@
 version: '3.8'
 
 services:
+  # Application RepoSwipe
+  app:
+    build: .
+    container_name: reposwipe-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # À configurer via .env ou variables d'environnement
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - SESSION_SECRET=${SESSION_SECRET}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - reposwipe-network
+    volumes:
+      - ./logs:/app/logs
+
+  # Redis pour les sessions
   redis:
     image: redis:7-alpine
     container_name: reposwipe-redis
@@ -15,7 +42,14 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+    networks:
+      - reposwipe-network
 
 volumes:
   redis_data:
     driver: local
+
+networks:
+  reposwipe-network:
+    driver: bridge
+

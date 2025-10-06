@@ -456,6 +456,7 @@ async function saveSwipe(repo, action) {
                 repoData: {
                     name: repo.name,
                     owner: repo.owner.login,
+                    ownerAvatar: repo.owner.avatar_url,
                     description: repo.description,
                     stars: repo.stargazers_count,
                     language: repo.language,
@@ -522,6 +523,7 @@ async function loadFavoritesFromServer() {
                 id: f.repo_id || f.repoId,
                 name: f.repo_data?.name || f.repoData?.name,
                 owner: f.repo_data?.owner || f.repoData?.owner,
+                ownerAvatar: f.repo_data?.ownerAvatar || f.repoData?.ownerAvatar,
                 description: f.repo_data?.description || f.repoData?.description,
                 stars: f.repo_data?.stars || f.repoData?.stars,
                 language: f.repo_data?.language || f.repoData?.language,
@@ -595,6 +597,7 @@ function addToFavorites(repo, isSuper = false) {
             id: repo.id,
             name: repo.name,
             owner: repo.owner.login,
+            ownerAvatar: repo.owner.avatar_url,  // Ajouter l'avatar
             description: repo.description,
             stars: repo.stargazers_count,
             language: repo.language,
@@ -611,7 +614,7 @@ function addToFavorites(repo, isSuper = false) {
         updateFavoritesCount();
         
         // Animation de feedback
-        showNotification(isSuper ? '⭐ Super Like!' : '❤️ Ajouté aux favoris!');
+        showNotification(isSuper ? '⭐ Super Like!' : '❤️ Ajouté aux favoris!', 'success');
     }
 }
 
@@ -674,10 +677,15 @@ function displayFavorites() {
     
     favoritesList.innerHTML = favorites.map(fav => `
         <div class="favorite-item" data-id="${fav.id}">
-            ${fav.isSuper ? '<span style="float: right;">⭐</span>' : ''}
-            <h4>${fav.name || 'Repo sans nom'}</h4>
-            <p>@${fav.owner || 'Inconnu'}</p>
-            <p style="font-size: 0.85rem;">${fav.description || 'Pas de description'}</p>
+            ${fav.isSuper ? '<span style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem;">⭐</span>' : ''}
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                ${fav.ownerAvatar ? `<img src="${fav.ownerAvatar}" alt="${fav.owner}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : ''}
+                <div>
+                    <h4 style="margin: 0;">${fav.name || 'Repo sans nom'}</h4>
+                    <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">@${fav.owner || 'Inconnu'}</p>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem;">${fav.description || 'Pas de description'}</p>
             <div class="favorite-item-footer">
                 <div class="favorite-item-stats">
                     <span><i class="fas fa-star"></i> ${formatNumber(fav.stars || 0)}</span>

@@ -1,9 +1,17 @@
 node_modules
 npm-debug.log
 .env
+.env.local
 .git
 .gitignore
 logs
 *.log
 README.md
 .vscode
+.DS_Store
+Thumbs.db
+*.md
+!package*.json
+.github
+.kiro
+public/app.html.bak

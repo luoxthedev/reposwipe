@@ -7,11 +7,16 @@ Découvrez des projets GitHub de manière fun et interactive ! Swipez à gauche 
 - 🎴 **Interface Tinder-like** - Swipez les repos GitHub
 - 🔐 **Authentification** - Créez un compte pour sauvegarder vos swipes
 - 💖 **Système de favoris** - Sauvegardez vos repos préférés sur le serveur
+- 📊 **Statistiques** - Suivez vos swipes, likes, et taux d'appréciation
+- 🌙 **Mode sombre** - Interface adaptative avec sauvegarde de préférence
 - 🔍 **Filtres avancés** - Par langage, stars, date
+- 🎲 **Randomisation** - Découvrez toujours de nouveaux repos
+- 🚦 **Rate limiting** - Protection contre les abus (7 req/s)
 - 📱 **Responsive** - Fonctionne sur mobile et desktop
 - 🎯 **Drag & Drop** - Interaction naturelle
 - ⚡ **Super Like** - Pour les projets exceptionnels
 - 💾 **Sauvegarde serveur** - Vos favoris sont synchronisés
+- 🐳 **Docker ready** - Déploiement facile en production
 
 ## 🚀 Installation rapide
 
@@ -42,7 +47,9 @@ Ouvre ton navigateur sur `http://localhost:3000`
 📖 **Guides disponibles** :
 - [SETUP.md](SETUP.md) - Configuration Supabase
 - [GITHUB_TOKEN.md](GITHUB_TOKEN.md) - Obtenir un token GitHub (IMPORTANT)
+- [DOCKER.md](DOCKER.md) - Déploiement avec Docker (Production)
 - [COMMANDS.md](COMMANDS.md) - Toutes les commandes disponibles
+- [START.md](START.md) - Démarrage rapide
 
 ## 🎮 Comment utiliser
 
@@ -112,12 +119,17 @@ RepoSwipe/
 - [x] Ajouter des logs avec Winston
 - [x] Configuration MCP Supabase
 - [x] Docker pour Redis
-- [ ] Ajouter des statistiques utilisateur dans l'UI
+- [x] Ajouter des statistiques utilisateur dans l'UI
+- [x] Mode sombre
+- [x] Rate limiting
+- [x] GitHub API authentication
+- [x] Randomisation des repos
+- [x] Docker Compose complet
 - [ ] Implémenter le partage de favoris
-- [ ] Mode sombre
 - [ ] Export des favoris en JSON
 - [ ] Notifications push
 - [ ] Tests unitaires et d'intégration
+- [ ] CI/CD avec GitHub Actions
 
 ## 🔧 Personnalisation
 
