@@ -516,17 +516,36 @@ async function loadFavoritesFromServer() {
         const response = await fetch('/api/swipes/favorites');
         const data = await response.json();
         
-        if (data.favorites) {
+        if (data.favorites && data.favorites.length > 0) {
+            // Mapper les favoris du serveur au format local
             favorites = data.favorites.map(f => ({
-                id: f.repoId,
-                ...f.repoData,
+                id: f.repo_id || f.repoId,
+                name: f.repo_data?.name || f.repoData?.name,
+                owner: f.repo_data?.owner || f.repoData?.owner,
+                description: f.repo_data?.description || f.repoData?.description,
+                stars: f.repo_data?.stars || f.repoData?.stars,
+                language: f.repo_data?.language || f.repoData?.language,
+                url: f.repo_data?.url || f.repoData?.url,
                 isSuper: f.action === 'super'
             }));
+            
+            // Sauvegarder dans localStorage
             localStorage.setItem('repoSwipeFavorites', JSON.stringify(favorites));
+            
+            // Mettre à jour le compteur
+            updateFavoritesCount();
+            
+            console.log(`✅ ${favorites.length} favoris chargés depuis le serveur`);
+        } else {
+            console.log('ℹ️ Aucun favori trouvé');
+            favorites = [];
             updateFavoritesCount();
         }
     } catch (error) {
         console.error('Erreur lors du chargement des favoris:', error);
+        // En cas d'erreur, charger depuis localStorage
+        favorites = JSON.parse(localStorage.getItem('repoSwipeFavorites')) || [];
+        updateFavoritesCount();
     }
 }
 
@@ -645,20 +664,23 @@ function updateFavoritesCount() {
 function displayFavorites() {
     const favoritesList = document.getElementById('favoritesList');
     
+    // Recharger les favoris depuis localStorage au cas où
+    favorites = JSON.parse(localStorage.getItem('repoSwipeFavorites')) || [];
+    
     if (favorites.length === 0) {
-        favoritesList.innerHTML = '<p style="text-align: center; color: #6b7280;">Aucun favori pour le moment</p>';
+        favoritesList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">Aucun favori pour le moment<br><small>Swipe à droite ou vers le haut pour ajouter des favoris !</small></p>';
         return;
     }
     
     favoritesList.innerHTML = favorites.map(fav => `
-        <div class="favorite-item">
+        <div class="favorite-item" data-id="${fav.id}">
             ${fav.isSuper ? '<span style="float: right;">⭐</span>' : ''}
-            <h4>${fav.name}</h4>
-            <p>@${fav.owner}</p>
+            <h4>${fav.name || 'Repo sans nom'}</h4>
+            <p>@${fav.owner || 'Inconnu'}</p>
             <p style="font-size: 0.85rem;">${fav.description || 'Pas de description'}</p>
             <div class="favorite-item-footer">
                 <div class="favorite-item-stats">
-                    <span><i class="fas fa-star"></i> ${formatNumber(fav.stars)}</span>
+                    <span><i class="fas fa-star"></i> ${formatNumber(fav.stars || 0)}</span>
                     ${fav.language ? `<span>${fav.language}</span>` : ''}
                 </div>
                 <button class="remove-favorite" onclick="removeFavorite(${fav.id})">
@@ -670,14 +692,32 @@ function displayFavorites() {
             </a>
         </div>
     `).join('');
+    
+    console.log(`📋 ${favorites.length} favoris affichés`);
 }
 
 // Supprimer un favori
-function removeFavorite(id) {
-    favorites = favorites.filter(fav => fav.id !== id);
-    localStorage.setItem('repoSwipeFavorites', JSON.stringify(favorites));
-    updateFavoritesCount();
-    displayFavorites();
+async function removeFavorite(id) {
+    try {
+        // Supprimer du serveur
+        await fetch(`/api/swipes/${id}`, {
+            method: 'DELETE'
+        });
+        
+        // Supprimer localement
+        favorites = favorites.filter(fav => fav.id !== id);
+        localStorage.setItem('repoSwipeFavorites', JSON.stringify(favorites));
+        
+        // Mettre à jour l'affichage
+        updateFavoritesCount();
+        displayFavorites();
+        
+        showNotification('🗑️ Favori supprimé', 'info');
+        console.log(`🗑️ Favori ${id} supprimé`);
+    } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        showNotification('❌ Erreur lors de la suppression', 'error');
+    }
 }
 
 // Configuration des événements
@@ -719,8 +759,10 @@ function setupEventListeners() {
     });
     
     // Panneau des favoris
-    document.getElementById('favoritesBtn').addEventListener('click', () => {
+    document.getElementById('favoritesBtn').addEventListener('click', async () => {
         document.getElementById('favoritesPanel').classList.add('active');
+        // Recharger les favoris depuis le serveur avant d'afficher
+        await loadFavoritesFromServer();
         displayFavorites();
     });
     
