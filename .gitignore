@@ -12,6 +12,10 @@ logs/
 *.log
 npm-debug.log*
 
+# Tests
+coverage/
+.nyc_output/
+
 # OS
 .DS_Store
 Thumbs.db
