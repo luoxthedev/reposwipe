@@ -677,11 +677,10 @@ function displayFavorites() {
     
     favoritesList.innerHTML = favorites.map(fav => `
         <div class="favorite-item" data-id="${fav.id}">
-            ${fav.isSuper ? '<span style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem;">⭐</span>' : ''}
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
                 ${fav.ownerAvatar ? `<img src="${fav.ownerAvatar}" alt="${fav.owner}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : ''}
-                <div>
-                    <h4 style="margin: 0;">${fav.name || 'Repo sans nom'}</h4>
+                <div style="flex: 1;">
+                    <h4 style="margin: 0;">${fav.name || 'Repo sans nom'} ${fav.isSuper ? '⭐' : ''}</h4>
                     <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">@${fav.owner || 'Inconnu'}</p>
                 </div>
             </div>
