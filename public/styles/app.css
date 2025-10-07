@@ -490,20 +490,42 @@ main {
     color: var(--dark);
 }
 
-.icon-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: #6b7280;
-    transition: all 0.3s;
-    padding: 0.5rem;
-    border-radius: 8px;
+.favorites-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0 1.5rem 1rem 1.5rem;
 }
 
-.icon-btn:hover {
-    color: var(--primary);
+.action-btn-panel {
+    flex: 1;
+    padding: 0.75rem 1rem;
     background: var(--light);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--dark);
+}
+
+.action-btn-panel:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.dark-mode .action-btn-panel {
+    background: #374151;
+    color: white;
+}
+
+.dark-mode .action-btn-panel:hover {
+    background: var(--primary);
 }
 
 /* Leaderboard Panel */
