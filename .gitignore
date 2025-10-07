@@ -16,6 +16,10 @@ npm-debug.log*
 coverage/
 .nyc_output/
 
+# IDE
+.vscode/
+.idea/
+
 # OS
 .DS_Store
 Thumbs.db
