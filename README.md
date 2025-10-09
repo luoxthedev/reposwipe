@@ -44,6 +44,65 @@ npm run dev
 
 Ouvre ton navigateur sur `http://localhost:3000`
 
+## 🐳 Exécuter avec Docker
+
+Si tu veux exécuter RepoSwipe rapidement sans installer Node.js localement, suis ces étapes :
+
+1) Installer Docker
+
+ - Sur Debian/Ubuntu :
+
+```bash
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
+	"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+	$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+sudo usermod -aG docker $USER
+```
+
+ - Sur macOS / Windows : installe Docker Desktop depuis https://www.docker.com/get-started
+
+2) Construire l'image (optionnel si tu veux utiliser Docker Compose)
+
+```bash
+docker build -t ghcr.io/luoxthedev/reposwipe:latest .
+```
+
+3) Lancer avec Docker (mode simple)
+
+```bash
+docker run -d -p 3000:3000 --name reposwipe \
+	-e PORT=3000 \
+	-e NODE_ENV=production \
+	--env-file .env ghcr.io/luoxthedev/reposwipe:latest
+```
+
+4) Lancer avec Docker Compose (recommandé)
+
+Si tu préfères utiliser `docker-compose` (définit les services Redis + app), exécute :
+
+```bash
+docker-compose up -d
+```
+
+5) Pousser l'image vers GHCR (optionnel)
+
+Si tu veux publier l'image sur GitHub Container Registry :
+
+```bash
+# Se connecter (utilise un PAT avec write:packages)
+echo $GHCR_PAT | docker login ghcr.io -u <GITHUB_USERNAME> --password-stdin
+
+docker tag reposwipe:local ghcr.io/luoxthedev/reposwipe:latest
+docker push ghcr.io/luoxthedev/reposwipe:latest
+```
+
+Note : le repository contient un workflow GitHub Actions qui build et publie automatiquement l'image sur `ghcr.io/luoxthedev/reposwipe` quand tu push sur `main`.
+
 📖 **Guides disponibles** :
 - [SETUP.md](SETUP.md) - Configuration Supabase
 - [GITHUB_TOKEN.md](GITHUB_TOKEN.md) - Obtenir un token GitHub (IMPORTANT)
