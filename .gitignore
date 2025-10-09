@@ -3,17 +3,27 @@
 
 # Keep example file
 !.env.exemple
+coverage/lcov.info
+coverage/clover.xml
+coverage/lcov-report/
 
 # Dependencies
+*.tmp
+*.swp
+*.swo
 node_modules/
+package-lock.json
 
 # Logs
+start.bat
 logs/
 *.log
+start.sh
 npm-debug.log*
 
 # Tests
 coverage/
+*.log
 .nyc_output/
 
 # IDE
